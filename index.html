@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="brand-panel">
+      <h1>Welcome back 👋</h1>
+      <p>Sign in to continue to your account and pick up right where you left off.</p>
+    </div>
+
+    <div class="form-panel">
+      <h2>Sign in</h2>
+      <p class="subtitle">Enter your credentials to continue</p>
+      <p id="msg" class="error"></p>
+
+      <form id="loginForm">
+        <div class="field">
+          <span class="icon">✉️</span>
+          <input type="email" id="email" placeholder="Email address" required />
+        </div>
+        <div class="field">
+          <span class="icon">🔒</span>
+          <input type="password" id="password" placeholder="Password" required />
+          <button type="button" class="toggle" data-target="password">Show</button>
+        </div>
+        <button type="submit" class="btn">Login</button>
+      </form>
+
+      <p class="switch">New here? <a href="register.html">Create an account</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Already logged in? Go straight to the dashboard
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = "dashboard.html";
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const msg = document.getElementById("msg");
+      msg.textContent = "";
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        msg.textContent = "Invalid email or password.";
+      }
+    });
+  </script>
+
+  <script>
+    // Show / Hide password
+    document.querySelectorAll(".toggle").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const input = document.getElementById(btn.dataset.target);
+        const show = input.type === "password";
+        input.type = show ? "text" : "password";
+        btn.textContent = show ? "Hide" : "Show";
+      });
+    });
+  </script>
+</body>
+</html>

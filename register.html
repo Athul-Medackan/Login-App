@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="brand-panel">
+    <h1>Join us today 🚀</h1>
+    <p>Create your free account in seconds and get started right away.</p>
+  </div>
+
+  <div class="form-panel">
+    <h2>Create account</h2>
+    <p class="subtitle">Fill in the details below to register</p>
+    <p id="msg" class="error"></p>
+
+    <form id="registerForm">
+      <div class="field">
+        <span class="icon">👤</span>
+        <input type="text" id="name" placeholder="Full name" required />
+      </div>
+      <div class="field">
+        <span class="icon">✉️</span>
+        <input type="email" id="email" placeholder="Email address" required />
+      </div>
+      <div class="field">
+        <span class="icon">🔒</span>
+        <input type="password" id="password" placeholder="Password (min 6 chars)" minlength="6" required />
+        <button type="button" class="toggle" data-target="password">Show</button>
+      </div>
+      <button type="submit" class="btn">Create account</button>
+    </form>
+
+    <p class="switch">Already registered? <a href="index.html">Login</a></p>
+  </div>
+</div>
+<script>
+  document.querySelectorAll(".toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.textContent = show ? "Hide" : "Show";
+    });
+  });
+</script>

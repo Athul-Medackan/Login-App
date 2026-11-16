@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container single">
+    <div class="form-panel">
+      <div class="avatar" id="avatar">?</div>
+      <h2 id="welcome">Loading...</h2>
+      <p class="subtitle" id="email"></p>
+      <button id="logout" class="btn" style="width: 100%">Logout</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from "./firebase.js";
+    import { onAuthStateChanged, signOut }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { doc, getDoc }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    onAuthStateChanged(auth, async (user) => {
+      // Not logged in -> send back to the login page
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      // Get the saved profile from Firestore
+      let name = user.displayName || user.email;
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (snap.exists()) name = snap.data().name;
+      } catch (err) {
+        console.error("Could not load profile:", err);
+      }
+
+      document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
+      document.getElementById("welcome").textContent = `Welcome, ${name} 🎉`;
+      document.getElementById("email").textContent = user.email;
+    });
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
